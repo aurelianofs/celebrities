@@ -52,7 +52,13 @@ wss.on('connection', (ws) => {
         player.send('PLAYER_LOGGED', {
           id: player.id,
           name: player.name,
-          game: player.getGame()
+          game: player.getGame(),
+          games: games.map(g => {
+            return {
+              id: g.id,
+              host: g.getHost().name
+            }
+          })
         })
         break;
       }

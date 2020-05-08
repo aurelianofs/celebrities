@@ -20,7 +20,8 @@ class App extends Component {
       this.setState({
         id: data.id,
         name: data.name,
-        game: data.game
+        game: data.game,
+        availableGames: data.games
       });
     },
     'AVAILABLE_GAMES': data => {
