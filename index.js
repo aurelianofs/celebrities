@@ -32,6 +32,8 @@ wss.on('connection', (ws) => {
 
   let player = new Player(ws);
 
+  console.log(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), 'New device connected.');
+
   ws.on('message', function(msg) {
     const { action, data } = JSON.parse(msg);
 
@@ -44,7 +46,7 @@ wss.on('connection', (ws) => {
         // Check if it's a returning player
         if(found) {
           player = found;
-          player.setClient(ws)
+          player.returning(ws);
         } else {
           allPlayers.push(player)
         }
@@ -114,12 +116,6 @@ wss.on('connection', (ws) => {
             })
           });
         }
-
-        gamePlayers.send('GAME_UPDATE', p => {
-          return {
-            game: p.getGame()
-          }
-        });
         break;
       }
       case 'START_GAME': {
@@ -151,6 +147,31 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
+    player.leaving(function(){
+      const playerIndex = allPlayers.findIndex(p => p.id === player.id);
+      allPlayers.splice(playerIndex, 1);
+
+      if(player.game) {
+        const game = player.game;
+        const gamePlayers = game.players;
+        const closeGame = game.removePlayer(player);
+
+        // The host left, remove the game
+        if(closeGame) {
+          const gameIndex = games.findIndex(g => g.id === game.id);
+          games.splice(gameIndex, 1);
+
+          allPlayers.send('AVAILABLE_GAMES', {
+            games: games.map(g => {
+              return {
+                id: g.id,
+                host: g.getHost().name
+              }
+            })
+          });
+        }
+      }
+    }, 1000*60*10);
     console.log('Player ' + player.id + ' disconnected');
   });
 });

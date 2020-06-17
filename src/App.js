@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import WebSocketAPI from './WebSocketAPI'
+import Socket from './Socket'
 import Welcome from './screens/Welcome';
 import Lobby from './screens/Lobby';
 import Game from './screens/Game';
@@ -15,7 +15,7 @@ class App extends Component {
     apiState: null,
   }
 
-  api = new WebSocketAPI({
+  api = new Socket({
     'PLAYER_LOGGED': data => {
       this.setState({
         id: data.id,

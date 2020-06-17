@@ -6,7 +6,7 @@ if(process.env.NODE_ENV === 'development') {
 
 const savedPlayerID = localStorage && localStorage.getItem('playerID') ? JSON.parse(localStorage.getItem('playerID')) : null;
 
-class WebSocketAPI {
+class Socket {
   ws = new WebSocket(HOST);
   onApiStateChange = null;
   pingTimeout = false;
@@ -56,4 +56,4 @@ class WebSocketAPI {
   }
 }
 
-export default WebSocketAPI;
+export default Socket;

@@ -5,6 +5,7 @@ class Player {
   name = null;
   client = null;
   game = null;
+  leaveTimeout = null;
 
   constructor(client) {
     this.id = crypto.randomBytes(7).toString('hex');
@@ -40,6 +41,21 @@ class Player {
       hostId: this.game.hostId,
       players: this.game.getPlayers(this.id)
     } : null;
+  }
+
+  leaving(fn, timeCount) {
+    this.leaveTimeout = setTimeout(function(){
+      this.leaveTimeout = null;
+
+      fn();
+    }, timeCount)
+  }
+
+  returning(client) {
+    this.setClient(client);
+
+    clearTimeout(this.leaveTimeout);
+    this.leaveTimeout = null;
   }
 }
 

@@ -24,13 +24,22 @@ class Game {
 
   removePlayer(player) {
     let closeGame = false;
+
     if(player.id === this.hostId) {
       this.players.forEach(p => p.leaveGame());
       closeGame = true;
+
     } else {
       this.players = this.players.filter(p => p.id !== player.id);
       player.leaveGame();
     }
+
+    this.players.send('GAME_UPDATE', p => {
+      return {
+        game: p.getGame()
+      }
+    });
+
     return closeGame;
   }
 
